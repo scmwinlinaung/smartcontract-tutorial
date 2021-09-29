@@ -1,22 +1,22 @@
-require('dotenv').config();
+require( 'dotenv' ).config();
 const { API_URL, PRIVATE_KEY } = process.env;
-const Web3 = require('web3')
-const provider = new Web3.providers.HttpProvider(API_URL)
-const web3 = new Web3(provider)
+const Web3 = require( 'web3' )
+const provider = new Web3.providers.HttpProvider( API_URL )
+const web3 = new Web3( provider )
 
-async function main() {
-	require('dotenv').config();
+async function main ()
+{
 	const { API_URL, PRIVATE_KEY } = process.env;
-	const Web3 = require('web3')
-	const provider = new Web3.providers.HttpProvider(API_URL)
-	const web3 = new Web3(provider)
+	const Web3 = require( 'web3' )
+	const provider = new Web3.providers.HttpProvider( API_URL )
+	const web3 = new Web3( provider )
 	// console.log(await getBlockNumber())
 
 	const myAddress = '0x627306090abaB3A6e1400e9345bC60c78a8BEf57' //TODO: replace this address with your own public address
 
 
-	const nonce = await getNonce(myAddress); // nonce starts counting from 0
-	console.log(nonce)
+	const nonce = await getNonce( myAddress ); // nonce starts counting from 0
+	console.log( nonce )
 
 	const ABI = [
 		{
@@ -104,7 +104,7 @@ async function main() {
 
 	const contract_address = "0xd9145CCE52D386f254917e481eB44e9943F39138";
 
-	const contract = new web3.eth.Contract(ABI, contract_address)
+	const contract = new web3.eth.Contract( ABI, contract_address )
 	// const encodedParameters = web3.eth.abi.encodeParameter(
 	// 	'bytes32',
 	// 	'0x1111111111111111111111111111111111111111111111111111111111111111',
@@ -113,29 +113,30 @@ async function main() {
 	// const bytecodeWithEncodedParameters = '0x' + ByteCode + encodedParameters;
 
 	// deploy contract with constructor value
-	const tx = await contract.deploy({
+	const tx = await contract.deploy( {
 		data: ByteCode, arguments: [
-			'0x1111111111111111111111111111111111111111111111111111111111111111']
-	})
-	await sendSignedTransaction(contract._address, nonce,
+			'0x1111111111111111111111111111111111111111111111111111111111111111' ]
+	} )
+	await sendSignedTransaction( contract._address, nonce,
 		tx.encodeABI()
 	);
 	// for setter method
 	let extraData = contract.methods.sign();
 	let data = extraData.encodeABI()
 
-	await sendSignedTransaction(contract._address, nonce, data);
+	await sendSignedTransaction( contract._address, nonce, data );
 
 	// for getter methods
-	await getDocumentState(contract);
+	await getDocumentState( contract );
 
 
 
 }
 
-async function getDocumentState(contract) {
+async function getDocumentState ( contract )
+{
 	const state = await contract.methods.getDocumentState().call();
-	console.log(state)
+	console.log( state )
 	// contract.methods.getDocumentState()
 	// 	.call(function (err, res) {
 	// 		if (err) {
@@ -146,18 +147,22 @@ async function getDocumentState(contract) {
 	// 	})
 }
 
-async function getAUser(contract) {
-	contract.methods.getAUser("0x8fDe201d23CB8e42F4111d8479758614776A8913")
-		.call(function (err, res) {
-			if (err) {
-				console.log("An error occured", err)
+async function getAUser ( contract )
+{
+	contract.methods.getAUser( "0x8fDe201d23CB8e42F4111d8479758614776A8913" )
+		.call( function ( err, res )
+		{
+			if ( err )
+			{
+				console.log( "An error occured", err )
 				return
 			}
-			console.log("Hash of the transaction: " + res)
-		})
+			console.log( "Hash of the transaction: " + res )
+		} )
 }
 
-async function sendSignedTransaction(contractAddress, nonce, data) {
+async function sendSignedTransaction ( contractAddress, nonce, data )
+{
 	const transaction = {
 		// faucet address to return eth
 		'to': contractAddress,
@@ -170,26 +175,31 @@ async function sendSignedTransaction(contractAddress, nonce, data) {
 	};
 
 
-	const signedTx = await web3.eth.accounts.signTransaction(transaction, PRIVATE_KEY);
+	const signedTx = await web3.eth.accounts.signTransaction( transaction, PRIVATE_KEY );
 
-	web3.eth.sendSignedTransaction(signedTx.rawTransaction, function (error, hash) {
-		if (!error) {
-			console.log("🎉 The hash of your transaction is: ", hash, "\n Check Alchemy's Mempool to view the status of your transaction!");
-		} else {
-			console.log("❗Something went wrong while submitting your transaction:", error)
+	web3.eth.sendSignedTransaction( signedTx.rawTransaction, function ( error, hash )
+	{
+		if ( !error )
+		{
+			console.log( "🎉 The hash of your transaction is: ", hash, "\n Check Alchemy's Mempool to view the status of your transaction!" );
+		} else
+		{
+			console.log( "❗Something went wrong while submitting your transaction:", error )
 		}
-	}).catch((error) => { console.log(" " + error) });
+	} ).catch( ( error ) => { console.log( " " + error ) } );
 
 
 }
 
-async function getBlockNumber() {
+async function getBlockNumber ()
+{
 	const latestBlockNumber = await web3.eth.getBlockNumber()
 	return latestBlockNumber
 }
 
-async function getNonce(myAddress) {
-	return await web3.eth.getTransactionCount(myAddress, 'latest')
+async function getNonce ( myAddress )
+{
+	return await web3.eth.getTransactionCount( myAddress, 'latest' )
 }
 
 main();
